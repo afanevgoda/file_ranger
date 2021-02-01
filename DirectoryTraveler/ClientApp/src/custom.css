@@ -1,0 +1,93 @@
+/* Provide sufficient contrast against white background */
+a {
+    color: #0366d6;
+}
+
+code {
+    color: #E01A76;
+}
+
+.btn-primary {
+    color: #fff;
+    background-color: #1b6ec2;
+    border-color: #1861ac;
+}
+
+.file {
+    border: 1px solid black;
+    width: 200px;
+    height: 70px;
+    margin: 2px;
+    padding: 10px;
+    border-radius: 10px;
+    background-color: aliceblue;
+    display: inline-flex;
+    cursor: pointer;
+}
+
+.file:hover {
+    background-color: lightblue;
+}
+
+.folder {
+    border: 1px solid black;
+    width: 200px;
+    height: 70px;
+    margin: 2px;
+    padding: 10px;
+    border-radius: 10px;
+    background-color: bisque;
+    display: inline-flex;
+    cursor: pointer;
+}
+
+.folder:hover {
+    background-color: burlywood;
+}
+
+.fileName {
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.contextMenuItem {
+    width: 200px;
+    padding: 10px 10px 10px 10px;
+    background-color: rgba(0, 0, 0, 0.9);
+    border-top: 1px wheat solid;
+    color: wheat;
+    cursor: pointer;
+}
+
+.contextMenuItem:hover {
+    background-color: darkslategray;
+}
+
+.contextMenuItem.menuItem-highest {
+    border-radius: 20px 20px 0 0;
+}
+
+.contextMenuItem.menuItem-middle {
+    border-radius: 0;
+}
+
+.contextMenuItem.menuItem-lowest {
+    border-radius: 0 0 20px 20px;
+}
+
+.deleteItem
+{
+    float: right;
+}
+
+.deleteItem:hover
+{
+    float: right;
+    background-color: palevioletred;
+}
+
+.itemType
+{
+    float: left;
+    margin-right: 10px;
+}
