@@ -15,8 +15,8 @@ namespace DirectoryTraveler.Controllers
     [Route("[controller]")]
     public class FileController : ControllerBase
     {
-        private IFileService _fileService;
-        private IFileTransfer _fileTransfer;
+        private readonly IFileService _fileService;
+        private readonly IFileTransfer _fileTransfer;
         
         public FileController(IFileService fileService, IFileTransfer fileTransfer)
         {

@@ -1,8 +1,7 @@
 ﻿import React, {useState, useEffect} from 'react';
-import styles from "./../custom.css";
 import {ContextMenu, ContextMenuTrigger, MenuItem, SubMenu} from "react-contextmenu";
 import { FaCut, FaTimes, FaCopy } from 'react-icons/fa';
-
+import styles from "../Explorer/explorer.css";
 
 export default function File({name, isFolder, type, onClick, path, copyFolder, copyCutBuffer, cutFolder, pasteFolder, onRemoveFromCutCopyBuffer}) {
 
@@ -12,7 +11,7 @@ export default function File({name, isFolder, type, onClick, path, copyFolder, c
         <span>
             <ContextMenuTrigger id={name} renderTag={"span"}>
                 <div onClick={() => onClick(name)} className={isFolder ? "folder" : "file"}>
-                    <span className={"fileName"}>{name}</span>
+                    <span className={styles.fileName}>{name}</span>
                     <span>{type}</span>
                 </div>
             </ContextMenuTrigger>
@@ -39,7 +38,7 @@ export default function File({name, isFolder, type, onClick, path, copyFolder, c
                         }}
                               onClick={() => pasteFolder(x)}
                     >
-                        <span className={"itemType"}>
+                        <span className={styles.itemType}>
                             {x.type === "copy"? (<FaCopy/>) : (<FaCut/>)}
                         </span> 
                             {x.name} 

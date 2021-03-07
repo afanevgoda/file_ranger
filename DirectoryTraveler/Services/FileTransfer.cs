@@ -12,40 +12,41 @@ namespace DirectoryTraveler.Services
         {
             try
             {
-                string sourceFile = Path.Combine(targetChange.OldPath, targetChange.OldName ?? "");
-                string destFile = Path.Combine(targetChange.NewPath, targetChange.NewName ?? "");
+                var sourceFile = targetChange.OldPath;
+                var destFile = targetChange.NewPath;
+                var oldFoler = Path.GetDirectoryName(sourceFile);
+                
+                if (!Directory.Exists($"{targetChange.NewPath}"))
+                    Directory.CreateDirectory($"{targetChange.NewPath}");
 
-                if(!Directory.Exists($"{targetChange.NewPath}/{targetChange.OldName}"))
-                    Directory.CreateDirectory($"{targetChange.NewPath}/{targetChange.OldName}");
+                if (!Directory.Exists(oldFoler))
+                    throw new FileNotFoundException();
 
-                if (Directory.Exists(targetChange.OldPath))
+                var files = Directory.GetFiles(oldFoler);
+
+                foreach (var pathToFile in files)
                 {
-                    var files = Directory.GetFiles(targetChange.OldPath);
+                    var fileName = Path.GetFileName(pathToFile);
+                    destFile = Path.Combine(targetChange.NewPath, fileName);
+                    File.Copy(pathToFile, destFile, true);
+                }
 
-                    foreach (var pathToFile in files)
+                var directories = Directory.GetDirectories(oldFoler);
+
+                foreach (var pathToDirectory in directories)
+                {
+                    var relativePathToParent = pathToDirectory.Replace(targetChange.OldPath, "");
+                    var newPath = $"{targetChange.NewPath}//{targetChange.OldName}//{relativePathToParent}";
+
+                    var targetChangeForInner = new FileChange
                     {
-                        var fileName = Path.GetFileName(pathToFile);
-                        destFile = Path.Combine(targetChange.NewPath, fileName);
-                        File.Copy(pathToFile, destFile, true);
-                    }
-                    
-                    var directories = Directory.GetDirectories(targetChange.OldPath);
+                        Force = targetChange.Force,
+                        Mode = targetChange.Mode,
+                        OldPath = pathToDirectory,
+                        NewPath = newPath
+                    };
 
-                    foreach (var pathToDirectory in directories)
-                    {
-                        var relativePathToParent = pathToDirectory.Replace(targetChange.OldPath, "");
-                        var newPath = $"{targetChange.NewPath}//{targetChange.OldName}//{relativePathToParent}";
-
-                        var targetChangeForInner = new FileChange
-                        {
-                            Force = targetChange.Force,
-                            Mode = targetChange.Mode,
-                            OldPath = pathToDirectory,
-                            NewPath = newPath
-                        };
-                        
-                        this.Copy(targetChangeForInner);
-                    }
+                    this.Copy(targetChangeForInner);
                 }
 
                 return true;

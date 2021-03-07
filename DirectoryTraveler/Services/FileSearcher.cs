@@ -20,7 +20,7 @@ namespace DirectoryTraveler.Services
             result.AddRange(fileList.Select(fileInfo =>
                     new File
                     {
-                        Name = fileInfo.Name,
+                        Name = Path.GetFileNameWithoutExtension(fileInfo.FullName),
                         Type = fileInfo.Extension,
                         IsFolder = false,
                         SizeKb = fileInfo.Length,
@@ -31,7 +31,7 @@ namespace DirectoryTraveler.Services
             result.AddRange(folderList.Select(fileInfo =>
                     new File
                     {
-                        Name = fileInfo.Name,
+                        Name = Path.GetFileNameWithoutExtension(fileInfo.FullName),
                         Type = fileInfo.Extension,
                         IsFolder = true,
                         Path = fileInfo.FullName

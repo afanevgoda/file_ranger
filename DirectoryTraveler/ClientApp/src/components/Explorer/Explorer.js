@@ -1,22 +1,23 @@
-﻿import React, {useState, useEffect, useCallback, useRef} from 'react';
+﻿import React, {useState, useEffect} from 'react';
 import {ContextMenu, MenuItem, ContextMenuTrigger} from "react-contextmenu";
-import File from "../components/File";
-import {GetAllForDirectory, CopyDirectory, CutDirectory} from "../services/FileService";
+import File from "../Explorer/File";
+import {GetAllForDirectory, CopyDirectory, CutDirectory} from "../../services/FileService";
+import {getFileName} from "../../helpers/fileHelper";
 
 export default function FileTraveler() {
 
     const [foundFiles, setFoundFiles] = useState(undefined);
-    const [targetDirectory, setTargetDirectory] = useState("F:\\");
+    const [targetDirectory, setTargetDirectory] = useState("C:\\");
     const [isLoading, setIsLoading] = useState(false);
     const [copyCutBuffer, setCopyCutBuffer] = useState([]);
 
     useEffect(() => {
 
-        GetAllForDirectory(targetDirectory).then((result) => {
-            console.log(result.data);
-            setFoundFiles(result.data);
+        (async () => {
+            const childFilesAndFolders = (await GetAllForDirectory(targetDirectory)).data;
+            setFoundFiles(childFilesAndFolders);
             setIsLoading(false);
-        });
+        })()
     }, [isLoading]);
 
     function onSearchInputChange(e) {
@@ -31,8 +32,12 @@ export default function FileTraveler() {
     }
 
     function copyFolder(fullPath) {
+
+        let fileName = getFileName(fullPath);
+
         copyCutBuffer.push({
             path: fullPath,
+            name: fileName,
             type: "copy"
         });
         setCopyCutBuffer(copyCutBuffer);
@@ -47,18 +52,21 @@ export default function FileTraveler() {
     }
 
     function cutFolder(fullPath) {
+        let fileName = getFileName(fullPath);
+
         copyCutBuffer.push({
             path: fullPath,
+            name: fileName,
             type: "cut"
         });
+
         setCopyCutBuffer(copyCutBuffer);
     }
 
-    function pasteFolder(target) {
-        if (target.type === "cut")
-            CutDirectory(target.path, targetDirectory);
-        else
-            CopyDirectory(target.path, targetDirectory);
+    async function pasteFolder(target) {
+        let func = target.type === "cut" ? CutDirectory : CopyDirectory;
+
+        await func(target.path, targetDirectory);
     }
 
     function onBackClick() {
@@ -84,19 +92,20 @@ export default function FileTraveler() {
             <button onClick={onBackClick}>Back</button>
             <div>
                 <div>Result:</div>
-                <div>{foundFiles && foundFiles.map((file) => (<File
-                    copyFolder={copyFolder}
-                    key={file.name}
-                    onClick={onFolderClickHandler}
-                    name={file.name}
-                    type={file.type}
-                    path={file.path}
-                    isFolder={file.isFolder}
-                    copyCutBuffer={copyCutBuffer}
-                    cutFolder={cutFolder}
-                    pasteFolder={pasteFolder}
-                    onRemoveFromCutCopyBuffer={onRemoveFromCutCopyBuffer}
-                />))}</div>
+                <div>{foundFiles && foundFiles.map((file) => (
+                    <File
+                        copyFolder={copyFolder}
+                        key={file.name}
+                        onClick={onFolderClickHandler}
+                        name={file.name}
+                        type={file.type}
+                        path={file.path}
+                        isFolder={file.isFolder}
+                        copyCutBuffer={copyCutBuffer}
+                        cutFolder={cutFolder}
+                        pasteFolder={pasteFolder}
+                        onRemoveFromCutCopyBuffer={onRemoveFromCutCopyBuffer}
+                    />))}</div>
             </div>
         </div>
     );
